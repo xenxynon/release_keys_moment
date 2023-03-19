@@ -1,6 +1,19 @@
 #!/bin/bash
 
-ota_zip=signed-ota_update.zip
+# red = errors, cyan = warnings, green = confirmations, blue = informational
+# plain for generic text, bold for titles, reset flag at each end of line
+# plain blue should not be used for readability reasons - use plain cyan instead
+CLR_RST=$(tput sgr0)                        ## reset flag
+CLR_RED=$CLR_RST$(tput setaf 1)             #  red, plain
+CLR_GRN=$CLR_RST$(tput setaf 2)             #  green, plain
+CLR_BLU=$CLR_RST$(tput setaf 4)             #  blue, plain
+CLR_CYA=$CLR_RST$(tput setaf 6)             #  cyan, plain
+CLR_BLD=$(tput bold)                        ## bold flag
+CLR_BLD_RED=$CLR_RST$CLR_BLD$(tput setaf 1) #  red, bold
+CLR_BLD_GRN=$CLR_RST$CLR_BLD$(tput setaf 2) #  green, bold
+CLR_BLD_BLU=$CLR_RST$CLR_BLD$(tput setaf 4) #  blue, bold
+CLR_BLD_CYA=$CLR_RST$CLR_BLD$(tput setaf 6) #  cyan, bold
+
 #  keygen
 function keygen() {
     local certs_dir=~/.android-certs
@@ -20,10 +33,9 @@ function keygen() {
     done
 }
 
-# make the commands runnable
+# generate executables
 function cmd() {
 m sign_target_files_apks && m ota_from_target_files
-
 }
 
 # sign the target files
@@ -32,7 +44,6 @@ croot
 sign_target_files_apks -o -d ~/.android-certs \
     $OUT/obj/PACKAGING/target_files_intermediates/*-target_files-*.zip \
     signed-target_files.zip
-
 }
 
 # zip it up!
@@ -68,9 +79,7 @@ echo ""
   N | n) echo "Ok, if you don't want ur wish :P";;
   esac
 
-
 echo ""
-rm  signed-target_files.zip  ota_from_target_files.zip -v # clearing out old ones if any exists, used -v to make sure it's done
 sign
 echo ""
 echo "×××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××××"
